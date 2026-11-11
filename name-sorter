@@ -1,0 +1,13 @@
+#!/bin/sh
+# Runs the Name Sorter:  ./name-sorter ./unsorted-names-list.txt
+# Build it first with:   mvn package
+
+app_home=$(cd "$(dirname "$0")" && pwd)
+jar="$app_home/target/name-sorter.jar"
+
+if [ ! -f "$jar" ]; then
+    echo "name-sorter has not been built yet. Run 'mvn package' in $app_home first." >&2
+    exit 1
+fi
+
+exec java -jar "$jar" "$@"

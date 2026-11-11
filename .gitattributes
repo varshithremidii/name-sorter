@@ -1,0 +1,3 @@
+# Keep each launch script in the line endings its shell needs, on every platform.
+name-sorter      text eol=lf
+name-sorter.cmd  text eol=crlf
