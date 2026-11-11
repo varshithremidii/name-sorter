@@ -51,6 +51,24 @@ class PersonNameTest {
     }
 
     @Test
+    void rejectsMissingLastName() {
+        assertThrows(InvalidNameException.class, () -> new PersonName(List.of("Janet"), null));
+    }
+
+    @Test
+    void rejectsMissingGivenNames() {
+        assertThrows(InvalidNameException.class, () -> new PersonName(null, "Parsons"));
+    }
+
+    @Test
+    void rejectsMissingGivenName() {
+        List<String> givenNames = new ArrayList<>();
+        givenNames.add(null);
+
+        assertThrows(InvalidNameException.class, () -> new PersonName(givenNames, "Parsons"));
+    }
+
+    @Test
     void rejectsBlankGivenName() {
         assertThrows(InvalidNameException.class, () -> new PersonName(List.of("Janet", " "), "Parsons"));
     }

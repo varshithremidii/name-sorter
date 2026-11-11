@@ -1,6 +1,7 @@
 package com.varshith.namesorter.model;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A person's name: one to three given names followed by a last name.
@@ -13,9 +14,12 @@ public record PersonName(List<String> givenNames, String lastName) {
     public static final int MAX_GIVEN_NAMES = 3;
 
     public PersonName {
+        if (givenNames == null || givenNames.stream().anyMatch(Objects::isNull)) {
+            throw new InvalidNameException("a given name cannot be missing");
+        }
         givenNames = List.copyOf(givenNames);
 
-        if (lastName.isBlank()) {
+        if (lastName == null || lastName.isBlank()) {
             throw new InvalidNameException("a name must have a last name");
         }
         if (givenNames.size() < MIN_GIVEN_NAMES || givenNames.size() > MAX_GIVEN_NAMES) {
