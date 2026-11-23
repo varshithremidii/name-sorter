@@ -98,6 +98,43 @@ class NameSorterAppTest {
         assertFalse(Files.exists(sortedNamesFile()));
     }
 
+    @Test
+    void sortsByGivenWhenAskedTo() throws IOException {
+        Path unsortedNamesFile = fileContaining(List.of("b a", "c b", "a c b", "a b c", "a b"));
+
+        int exitCode = run("--sort=given", unsortedNamesFile.toString());
+
+        List<String> expected = List.of("a b", "a b c", "a c b", "b a", "c b");
+        assertEquals(0, exitCode);
+        assertEquals(expected, linesOf(screen));
+        assertEquals(expected, Files.readAllLines(sortedNamesFile()));
+    }
+
+    @Test
+    void sortsByLastNameWhenAskedTo() throws IOException {
+        Path unsortedNamesFile = fileContaining(UNSORTED_NAMES_FROM_THE_BRIEF);
+
+        int exitCode = run("--sort=last", unsortedNamesFile.toString());
+
+        assertEquals(0, exitCode);
+        assertEquals(SORTED_NAMES_FROM_THE_BRIEF, linesOf(screen));
+        assertEquals(SORTED_NAMES_FROM_THE_BRIEF, Files.readAllLines(sortedNamesFile()));
+    }
+
+    @Test
+    void reportsAnUnknownSortOptionAndProducesNoOutput() throws IOException {
+        Path unsortedNamesFile = fileContaining(UNSORTED_NAMES_FROM_THE_BRIEF);
+
+        int exitCode = run("--sort=middle", unsortedNamesFile.toString());
+
+        assertEquals(1, exitCode);
+        assertEquals(
+                List.of("Error: Unknown sort option: --sort=middle (use --sort=last or --sort=given)"),
+                linesOf(errors));
+        assertEquals(List.of(), linesOf(screen));
+        assertFalse(Files.exists(sortedNamesFile()));
+    }
+
     private int run(String... args) {
         return NameSorterApp.run(args, printStreamTo(screen), printStreamTo(errors), workingDirectory);
     }
